@@ -329,8 +329,8 @@ hugo new content essays/adc-review.md --kind essay
 **解决**：先备份权限，再给当前用户完全控制：
 
 ```powershell
-icacls "D:\user\blog" /save "acl-backup.txt" /t
-icacls "D:\user\blog" /grant "$env:USERNAME:(OI)(CI)F"
+icacls "D:\user\IC_blog" /save "acl-backup.txt" /t
+icacls "D:\user\IC_blog" /grant "$env:USERNAME:(OI)(CI)F"
 ```
 
 `(OI)(CI)` 让权限继承到子目录和文件，`F` 是完全控制。改完立刻重试原操作，不要先重启工具。
