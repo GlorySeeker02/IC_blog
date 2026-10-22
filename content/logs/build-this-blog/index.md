@@ -441,6 +441,30 @@ params:
 {{- end -}}
 ```
 
+### 13. `hugo server` 一启动就报 `hugo_cache: Access is denied`
+
+**现象**：
+
+```text
+ERROR command error: failed to load config:
+mkdir C:\Users\<you>\AppData\Local\Temp\hugo_cache: Access is denied.
+```
+
+连构建都没开始就退出了。
+
+**根因**：Hugo 默认把缓存放在系统临时目录 `$TEMP\hugo_cache`。当账户或运行环境只允许写项目目录时（公司电脑的受限账户、沙箱、某些 CI），这个 `mkdir` 会被系统拒绝。
+
+**解决**：把缓存指到项目内，用环境变量而不是配置：
+
+```powershell
+$env:HUGO_CACHEDIR = "$PWD\.cache\hugo"
+.\.tools\hugo\hugo.exe server
+```
+
+或者在 `hugo.yaml` 里写**绝对路径**的 `cacheDir`。写相对路径不行，Hugo 会报 `must resolve to an absolute directory`——这个报错挺有迷惑性，因为文档里没强调。
+
+项目里放了一个 `serve.cmd`：它把 `HUGO_CACHEDIR`、`TEMP`、`TMP` 全部指到 `.cache/`，再启动 `hugo server`，双击或 `.\serve.cmd` 都行。这样既绕开了临时目录权限，也不往系统盘写临时文件。
+
 ## 十、验证清单
 
 上线前逐项过一遍，比上线后再修便宜得多：

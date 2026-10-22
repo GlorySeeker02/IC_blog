@@ -23,9 +23,19 @@ hugo version          # 输出里应包含 +extended
 hugo server -D        # http://localhost:1313
 ```
 
-本仓库的 `.tools/` 下有一个 Windows 便携版（已被 `.gitignore` 排除），也可以直接：
+本仓库的 `.tools/` 下有一个 Windows 便携版（已被 `.gitignore` 排除）。**在这个项目里推荐用包装脚本启动**：
 
 ```powershell
+.\serve.cmd              # http://localhost:1313
+.\serve.cmd --port 1414 -D
+```
+
+`serve.cmd` 会把 `HUGO_CACHEDIR` 和 `TEMP` 指到项目内的 `.cache/`，避免受限账户或沙箱环境写系统临时目录被拒（报 `mkdir ...\hugo_cache: Access is denied`）。
+
+如果不想用脚本，手动指定缓存目录也可以：
+
+```powershell
+$env:HUGO_CACHEDIR = "$PWD\.cache\hugo"
 .\.tools\hugo\hugo.exe server
 ```
 
@@ -142,6 +152,29 @@ hugo.yaml
 - `content/about.md`：自我介绍和联系方式
 - `content/search.md`、`content/archives.md`：一般不用动
 - 如果换项目名：`deploy/wrangler.jsonc` 里的 `name` 必须与 Cloudflare 项目名一致
+
+## 常见问题
+
+### `hugo server` 报 `mkdir C:\Users\<you>\AppData\Local\Temp\hugo_cache: Access is denied`
+
+Hugo 默认把缓存放在系统临时目录。受限账户、公司电脑或沙箱只允许写工作区时，创建这个目录会被拒。
+
+用 `.\serve.cmd`，或手动指定缓存：
+
+```powershell
+$env:HUGO_CACHEDIR = "$PWD\.cache\hugo"
+.\.tools\hugo\hugo.exe server
+```
+
+注意：在 `hugo.yaml` 里写相对路径的 `cacheDir` 不行，Hugo 会报 `must resolve to an absolute directory`；环境变量或绝对路径才可以。
+
+### `无法加载文件 serve.ps1，因为在此系统上禁止运行脚本`
+
+直接用 `serve.cmd`（它已经带了 `-ExecutionPolicy Bypass`），或：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\serve.ps1
+```
 
 ## 已知取舍
 

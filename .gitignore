@@ -1,6 +1,7 @@
 # ---- Hugo 构建产物 ----
 public/
 resources/
+.cache/
 .hugo_build.lock
 
 # ---- 本地工具（Hugo 便携版、临时下载）----
