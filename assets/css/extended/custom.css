@@ -69,12 +69,12 @@ html.iv-open body {
 .iv-image.iv-in-left { animation: iv-in-left 0.18s ease-out; }
 
 @keyframes iv-in-right {
-  from { opacity: 0.4; transform: translateX(24px); }
+  from { opacity: 0.4; }
   to { opacity: 1; }
 }
 
 @keyframes iv-in-left {
-  from { opacity: 0.4; transform: translateX(-24px); }
+  from { opacity: 0.4; }
   to { opacity: 1; }
 }
 

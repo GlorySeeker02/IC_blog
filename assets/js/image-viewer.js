@@ -137,9 +137,12 @@
   }
 
   function clampPan() {
-    var rect = img.getBoundingClientRect();
-    var limitX = Math.max(0, (rect.width - stage.clientWidth / 2) / 2 + 40);
-    var limitY = Math.max(0, (rect.height - stage.clientHeight / 2) / 2 + 40);
+    // 用未缩放的布局尺寸 × 当前 scale 计算边界。
+    // 不能再用 getBoundingClientRect()：它反映的是上一次 transform 的尺寸。
+    var w = img.offsetWidth * scale;
+    var h = img.offsetHeight * scale;
+    var limitX = Math.max(0, (w - stage.clientWidth) / 2) + 80;
+    var limitY = Math.max(0, (h - stage.clientHeight) / 2) + 80;
     tx = Math.min(limitX, Math.max(-limitX, tx));
     ty = Math.min(limitY, Math.max(-limitY, ty));
   }
