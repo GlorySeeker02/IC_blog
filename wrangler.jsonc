@@ -1,0 +1,10 @@
+// Workers 静态资源：告诉 wrangler 把 Hugo 的产物目录 public/ 当作站点根。
+// name 必须与 Cloudflare 上的 Worker 项目名完全一致（小写、连字符）。
+{
+  "name": "ic-blog",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}
