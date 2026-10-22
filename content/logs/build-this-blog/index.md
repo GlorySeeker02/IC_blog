@@ -108,7 +108,7 @@ outputs:
 ├── layouts/
 │   ├── _markup/         # ```mermaid 代码块钩子
 │   ├── _partials/       # KaTeX、Mermaid、页脚扩展
-│   └── shortcodes/      # video、mermaid、env
+│   └── _shortcodes/     # video、mermaid、env
 ├── static/videos/
 ├── themes/PaperMod/
 └── hugo.yaml

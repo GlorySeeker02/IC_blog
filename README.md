@@ -121,7 +121,7 @@ content/
 layouts/
   _markup/             ```mermaid 代码块钩子
   _partials/           KaTeX / Mermaid / 页脚扩展
-  shortcodes/          video / mermaid / env
+  _shortcodes/         video / mermaid / env
 static/videos/         Manim 产物
 themes/PaperMod/       主题（随仓库提交）
 hugo.yaml
