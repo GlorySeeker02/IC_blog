@@ -16,19 +16,15 @@
 
 ## 本地预览
 
-需要 Hugo extended ≥ 0.158（主题声明的最低版本）：
-
-```bash
-hugo version          # 输出里应包含 +extended
-hugo server -D        # http://localhost:1313
-```
-
-本仓库的 `.tools/` 下有一个 Windows 便携版（已被 `.gitignore` 排除）。**在这个项目里推荐用包装脚本启动**：
+需要 Hugo extended ≥ 0.158（主题声明的最低版本）。`hugo` 没有全局安装时，项目根目录的 `hugo.cmd` 会代理到 `.tools/hugo/hugo.exe`：
 
 ```powershell
-.\serve.cmd              # http://localhost:1313
+.\hugo version          # 输出里应包含 +extended
+.\serve.cmd             # http://localhost:1313
 .\serve.cmd --port 1414 -D
 ```
+
+`.tools/` 下是 Windows 便携版（已被 `.gitignore` 排除）。如果已经全局安装 Hugo，把 `.\hugo` 换成 `hugo` 即可。
 
 `serve.cmd` 会把 `HUGO_CACHEDIR` 和 `TEMP` 指到项目内的 `.cache/`，避免受限账户或沙箱环境写系统临时目录被拒（报 `mkdir ...\hugo_cache: Access is denied`）。
 
@@ -43,11 +39,11 @@ $env:HUGO_CACHEDIR = "$PWD\.cache\hugo"
 
 四类模板对应四个栏目：
 
-```bash
-hugo new content logs/calibre-drc-2026.md --kind log
-hugo new content cheatsheets/spectre-noise.md --kind cheatsheet
-hugo new content notes/paper-xxx.md --kind note
-hugo new content essays/adc-review.md --kind essay
+```powershell
+.\hugo new content logs/calibre-drc-2026.md --kind log
+.\hugo new content cheatsheets/spectre-noise.md --kind cheatsheet
+.\hugo new content notes/paper-xxx.md --kind note
+.\hugo new content essays/adc-review.md --kind essay
 ```
 
 生成的文件自带骨架和 front matter。两个开关按需打开：
@@ -154,6 +150,27 @@ hugo.yaml
 - 如果换项目名：`deploy/wrangler.jsonc` 里的 `name` 必须与 Cloudflare 项目名一致
 
 ## 常见问题
+
+### `hugo` 不是内部或外部命令 / 无法将“hugo”项识别为 cmdlet
+
+Hugo 没进 `PATH`。项目根目录的 `hugo.cmd` 已经代理到 `.tools/hugo/hugo.exe`，在项目里用：
+
+```powershell
+.\hugo version
+.\hugo new content logs/foo.md --kind log
+```
+
+想在任何目录直接用 `hugo`，把便携版目录加进用户 `PATH`（只影响当前用户，不需要管理员），然后重开终端：
+
+```powershell
+$dir = "$PWD\.tools\hugo"
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+if ($userPath -notlike "*$dir*") {
+    [Environment]::SetEnvironmentVariable('Path', "$userPath;$dir", 'User')
+}
+```
+
+注意 `.tools/` 被 `.gitignore` 排除，换机器后需要重新放一份 Hugo，或改用 `winget install Hugo.Hugo.Extended`。
 
 ### `hugo server` 报 `mkdir C:\Users\<you>\AppData\Local\Temp\hugo_cache: Access is denied`
 
