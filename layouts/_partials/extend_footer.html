@@ -1,0 +1,6 @@
+{{- /* 图片查看器：滚轮缩放 / 拖动 / 双指缩放，文章内图片自动生效 */ -}}
+{{- $viewer := resources.Get "js/image-viewer.js" -}}
+{{- with $viewer }}
+  {{- $viewer = . | minify | fingerprint -}}
+  <script defer src="{{ $viewer.RelPermalink }}" integrity="{{ $viewer.Data.Integrity }}"></script>
+{{- end }}

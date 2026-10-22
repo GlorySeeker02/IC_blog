@@ -1,0 +1,176 @@
+# ==============================================================================
+# 站点基础信息
+# ==============================================================================
+baseURL: "https://example.com/"
+title: "IC 设计笔记"
+theme: "PaperMod"
+
+locale: "zh-CN"
+defaultContentLanguage: "zh-cn"
+hasCJKLanguage: true
+enableEmoji: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+timeZone: "Asia/Shanghai"
+
+# 首页、栏目的 RSS/JSON 输出（JSON 供站内搜索使用）
+outputs:
+  home: ["HTML", "RSS", "JSON"]
+  section: ["HTML", "RSS"]
+  taxonomy: ["HTML", "RSS"]
+  term: ["HTML", "RSS"]
+
+taxonomies:
+  tag: "tags"
+  category: "categories"
+
+# 固定链接：与栏目一一对应，保证已分享的链接长期有效
+permalinks:
+  logs: "/logs/:slug/"
+  cheatsheets: "/cheatsheets/:slug/"
+  notes: "/notes/:slug/"
+  essays: "/essays/:slug/"
+
+# ==============================================================================
+# 分页与压缩
+# ==============================================================================
+pagination:
+  pagerSize: 20
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+# ==============================================================================
+# Markdown 渲染
+# ==============================================================================
+markup:
+  goldmark:
+    renderer:
+      # 允许文章里写少量原生 HTML（如 <kbd>、<br>）
+      unsafe: true
+    extensions:
+      typographer:
+        disable: false
+      # 公式透传：交给浏览器的 KaTeX 渲染，避免 _ ^ \ 被 Markdown 吃掉
+      passthrough:
+        enable: true
+        delimiters:
+          block:
+            - ["$$", "$$"]
+            - ["\\[", "\\]"]
+          inline:
+            - ["$", "$"]
+            - ["\\(", "\\)"]
+  highlight:
+    noClasses: false
+    codeFences: true
+    guessSyntax: true
+    lineNos: false
+    tabWidth: 4
+  tableOfContents:
+    startLevel: 2
+    endLevel: 4
+    ordered: false
+
+# ==============================================================================
+# 主题参数
+# ==============================================================================
+params:
+  env: production
+  title: "IC 设计笔记"
+  description: "集成电路设计知识库：踩坑记录、速查卡、论文笔记与设计复盘。"
+  keywords: ["集成电路", "IC 设计", "模拟电路", "版图", "Spectre", "Calibre", "Hugo"]
+  author: "站长"
+
+  # 首页聚合哪些栏目（PaperMod 默认只认 posts，不写这一行首页会是空的）
+  mainSections: ["logs", "cheatsheets", "notes", "essays"]
+
+  DateFormat: "2006-01-02"
+  defaultTheme: "auto"
+  disableThemeToggle: false
+
+  ShowReadingTime: true
+  ShowWordCount: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowRssButtonInSectionTermList: true
+  ShowFullTextinRSS: false
+  ShowToc: true
+  TocOpen: false
+  UseHugoToc: true
+
+  hideSummary: false
+  hidemeta: false
+  disableSpecial1stPost: false
+  disableScrollToTop: false
+  comments: false
+
+  homeInfoParams:
+    Title: "IC 设计笔记"
+    Content: "记录集成电路设计中的踩坑、命令与读书所得。少写「体系化长文」，多发 15 分钟能写完的记录。"
+
+  # 社交/联系入口（按需替换）
+  socialIcons:
+    - name: "github"
+      url: "https://github.com/"
+    - name: "rss"
+      url: "index.xml"
+
+  # PaperMod 编辑链接（可选）
+  # editPost:
+  #   URL: "https://github.com/<user>/<repo>/tree/main/content"
+  #   Text: "建议修改"
+  #   appendFilePath: true
+
+  # 站内搜索（Fuse.js 参数）
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    keys: ["title", "permalink", "summary", "content"]
+
+  assets:
+    disableHLJS: true
+    # favicon 由 static/favicon.ico 提供
+
+# ==============================================================================
+# 菜单
+# ==============================================================================
+menu:
+  main:
+    - identifier: "logs"
+      name: "日志"
+      url: "/logs/"
+      weight: 10
+    - identifier: "cheatsheets"
+      name: "速查"
+      url: "/cheatsheets/"
+      weight: 20
+    - identifier: "notes"
+      name: "笔记"
+      url: "/notes/"
+      weight: 30
+    - identifier: "essays"
+      name: "长文"
+      url: "/essays/"
+      weight: 40
+    - identifier: "tags"
+      name: "标签"
+      url: "/tags/"
+      weight: 50
+    - identifier: "archives"
+      name: "归档"
+      url: "/archives/"
+      weight: 60
+    - identifier: "search"
+      name: "搜索"
+      url: "/search/"
+      weight: 70

@@ -1,0 +1,31 @@
+{{- /* KaTeX：仅在 front matter 里写 math: true 的文章加载，避免全站多下载 300KB */ -}}
+{{- if .Params.math }}
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    function renderMath() {
+      if (typeof renderMathInElement !== "function") return;
+      var root = document.querySelector(".post-content") || document.body;
+      renderMathInElement(root, {
+        // 顺序很重要：$$ 必须排在 $ 前面，否则会先匹配到单个美元符号
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "\\[", right: "\\]", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+      });
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", renderMath);
+    } else {
+      renderMath();
+    }
+  })();
+</script>
+{{- end }}

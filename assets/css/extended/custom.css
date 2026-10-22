@@ -1,0 +1,289 @@
+/* ==========================================================================
+   本站自定义样式
+   PaperMod 会自动合并 assets/css/extended/ 下的所有 CSS，不需要改主题源码。
+   ========================================================================== */
+
+/* ---------- 图片查看器 ---------- */
+html.iv-open,
+html.iv-open body {
+  overflow: hidden;
+}
+
+.post-content img.iv-zoomable {
+  cursor: zoom-in;
+}
+
+.iv-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(8, 9, 12, 0.94);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5f5f5;
+  animation: iv-fade 0.16s ease-out;
+}
+
+.iv-overlay[hidden] {
+  display: none;
+}
+
+@keyframes iv-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.iv-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  outline: none;
+}
+
+.iv-stage.is-grabbing {
+  cursor: grabbing;
+}
+
+.iv-image {
+  max-width: 92vw;
+  max-height: 86vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transform-origin: center center;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+  border-radius: 2px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.55);
+}
+
+.iv-image.iv-in-right { animation: iv-in-right 0.18s ease-out; }
+.iv-image.iv-in-left { animation: iv-in-left 0.18s ease-out; }
+
+@keyframes iv-in-right {
+  from { opacity: 0.4; transform: translateX(24px); }
+  to { opacity: 1; }
+}
+
+@keyframes iv-in-left {
+  from { opacity: 0.4; transform: translateX(-24px); }
+  to { opacity: 1; }
+}
+
+.iv-toolbar {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.iv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9px;
+  background: rgba(30, 31, 36, 0.72);
+  color: #f5f5f5;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.iv-btn:hover {
+  background: rgba(64, 66, 76, 0.9);
+  border-color: rgba(255, 255, 255, 0.36);
+}
+
+.iv-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.iv-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 44px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(24, 25, 30, 0.6);
+  color: #f5f5f5;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.iv-nav:hover { background: rgba(64, 66, 76, 0.9); }
+.iv-nav svg { width: 22px; height: 22px; }
+.iv-prev { left: 10px; }
+.iv-next { right: 10px; }
+.iv-nav[hidden] { display: none; }
+
+.iv-counter {
+  position: absolute;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(20, 21, 25, 0.7);
+  border-radius: 999px;
+  padding: 3px 12px;
+  min-height: 0;
+}
+
+.iv-counter:empty { display: none; }
+
+@media (max-width: 640px) {
+  .iv-image { max-width: 96vw; max-height: 82vh; }
+  .iv-nav { width: 36px; height: 52px; }
+  .iv-prev { left: 4px; }
+  .iv-next { right: 4px; }
+  .iv-btn { width: 34px; height: 34px; }
+}
+
+/* ---------- 视频（Manim 短片）---------- */
+.video-figure {
+  margin: 2rem auto;
+  max-width: 760px;
+}
+
+.video-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+}
+
+.video-wrapper video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.video-figure figcaption {
+  margin-top: 0.6rem;
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--secondary);
+  line-height: 1.5;
+}
+
+/* ---------- Mermaid ---------- */
+.mermaid-wrap {
+  margin: 1.8rem 0;
+  padding: 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 8px);
+  background: var(--code-bg);
+}
+
+.mermaid-wrap pre.mermaid {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  text-align: center;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--primary);
+  overflow: visible;
+}
+
+.mermaid-wrap pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------- 环境信息框 ---------- */
+.env-box {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius, 8px);
+  background: var(--entry);
+  font-size: 0.92rem;
+}
+
+.env-box__title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.env-box dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 0.9rem;
+  margin: 0;
+}
+
+.env-box dt {
+  color: var(--secondary);
+}
+
+.env-box dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+/* ---------- 正文细节 ---------- */
+.post-content .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.4rem 0;
+}
+
+.post-content table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.post-content table th,
+.post-content table td {
+  white-space: nowrap;
+}
+
+.post-content figure > figcaption {
+  font-size: 0.86rem;
+  color: var(--secondary);
+}
+
+/* 中文正文行距与段距稍微放松一点，长文更好读 */
+.post-content p,
+.post-content li {
+  line-height: 1.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iv-overlay,
+  .iv-image,
+  .iv-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,5 @@
+{{- /* 让 ```mermaid 代码块直接可用，不必每次写短代码 */ -}}
+{{- partial "mermaid-assets.html" . -}}
+<div class="mermaid-wrap">
+  <pre class="mermaid">{{ .Inner | htmlEscape }}</pre>
+</div>

@@ -1,0 +1,66 @@
+{{- /*
+  Mermaid 资源与初始化。由 mermaid 短代码 / render-codeblock-mermaid.html 调用，
+  用页面级 Scratch 保证每页只输出一次。
+
+  为什么不放在 extend_footer.html：PaperMod 用 partialCached 缓存 footer，
+  按页面判断的条件会被第一篇文章的结果“冻住”，导致有的页面加载、有的不加载。
+*/ -}}
+{{- if not (.Page.Scratch.Get "mermaidAssetsLoaded") -}}
+{{- .Page.Scratch.Set "mermaidAssetsLoaded" true -}}
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    function init() {
+      var blocks = Array.prototype.slice.call(document.querySelectorAll("pre.mermaid"));
+      if (!blocks.length || !window.mermaid) return;
+
+      blocks.forEach(function (el) {
+        // 保存源码：Mermaid 渲染后会把 <pre> 的内容替换成 SVG
+        if (!el.dataset.src) el.dataset.src = el.textContent;
+      });
+
+      function currentTheme() {
+        var html = document.documentElement;
+        var body = document.body;
+        var declared = html.getAttribute("data-theme") || body.getAttribute("data-theme");
+        if (declared === "dark" || declared === "light") return declared;
+        if (html.classList.contains("dark") || body.classList.contains("dark")) return "dark";
+        return "default";
+      }
+
+      function render() {
+        blocks.forEach(function (el) {
+          el.removeAttribute("data-processed");
+          el.innerHTML = el.dataset.src;
+        });
+        window.mermaid.initialize({
+          startOnLoad: false,
+          theme: currentTheme(),
+          securityLevel: "loose",
+          fontFamily: "inherit",
+          flowchart: { htmlLabels: true, curve: "basis" }
+        });
+        window.mermaid.run({ nodes: blocks }).catch(function (err) {
+          console.error("[mermaid] render failed:", err);
+        });
+      }
+
+      render();
+
+      var timer = null;
+      var observer = new MutationObserver(function () {
+        clearTimeout(timer);
+        timer = setTimeout(render, 200);
+      });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme", "style"] });
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class", "data-theme", "style"] });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>
+{{- end -}}

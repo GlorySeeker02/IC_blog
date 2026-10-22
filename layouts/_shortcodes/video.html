@@ -1,0 +1,55 @@
+{{- /*
+  用法：
+    {{< video src="/videos/loop.webm" >}}
+    {{< video src="/videos/adc.mp4" caption="SAR ADC 转换过程" autoplay="false" >}}
+
+  参数：
+    src       必填，static/ 下的路径或 page bundle 内的文件名
+    caption   可选，图注
+    poster    可选，封面图
+    autoplay  默认 true；自动播放必须 muted + playsinline，否则浏览器会拦截
+    loop      默认 true
+    controls  默认 true
+*/ -}}
+{{- $src := .Get "src" -}}
+{{- if not $src -}}
+  {{- errorf "video shortcode: 缺少 src 参数（%s）" .Position -}}
+{{- end -}}
+
+{{- $res := .Page.Resources.GetMatch $src -}}
+{{- $url := "" -}}
+{{- $mime := "video/mp4" -}}
+{{- if $res -}}
+  {{- $url = $res.RelPermalink -}}
+  {{- with $res.MediaType -}}{{- $mime = .Type -}}{{- end -}}
+{{- else -}}
+  {{- $url = $src | relURL -}}
+  {{- if strings.HasSuffix (lower $src) ".webm" -}}
+    {{- $mime = "video/webm" -}}
+  {{- else if strings.HasSuffix (lower $src) ".mov" -}}
+    {{- $mime = "video/quicktime" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $autoplay := .Get "autoplay" | default "true" -}}
+{{- $loop := .Get "loop" | default "true" -}}
+{{- $controls := .Get "controls" | default "true" -}}
+{{- $poster := .Get "poster" -}}
+
+<figure class="video-figure">
+  <div class="video-wrapper">
+    <video
+      preload="metadata"
+      playsinline
+      {{ if eq $autoplay "true" }}autoplay muted{{ end }}
+      {{ if eq $loop "true" }}loop{{ end }}
+      {{ if eq $controls "true" }}controls{{ end }}
+      {{ with $poster }}poster="{{ . | relURL }}"{{ end }}>
+      <source src="{{ $url }}" type="{{ $mime }}">
+      你的浏览器不支持 <code>video</code> 标签，请<a href="{{ $url }}">下载视频</a>观看。
+    </video>
+  </div>
+  {{- with .Get "caption" }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>

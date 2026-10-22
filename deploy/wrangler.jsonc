@@ -1,0 +1,10 @@
+// 仅当项目使用 Workers 静态资源（而不是经典 Pages）时需要。
+// 复制到仓库根目录，并把 name 改成 Cloudflare 项目名（必须完全一致、小写）。
+{
+  "name": "ic-blog",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}

@@ -1,0 +1,5 @@
+{{- /* 显式写法：{{< mermaid >}}graph TD; A-->B{{< /mermaid >}} */ -}}
+{{- partial "mermaid-assets.html" . -}}
+<div class="mermaid-wrap">
+  <pre class="mermaid">{{ trim .Inner "\n" | htmlEscape }}</pre>
+</div>
