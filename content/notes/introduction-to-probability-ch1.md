@@ -1,31 +1,31 @@
 ---
 title: "Introduction to Probability Ch1"
 date: 2026-10-24T13:27:40+08:00
-draft: true
+draft: false
 slug: "introduction-to-probability-ch1"
-summary: ""
+summary: "Basic knowledge for probability"
 # 可选摘要：只写一句话，书名/章节交给下面的 book 字段
 description: ""
 tags: []
 # 所属专题，可多个：["noise", "signals"]
-topics: []
+topics: ["noise","signals"]
 # 一本书的所有章节建议挂同一个 series，series_weight 按笔记顺序排
-series: []
+series: [1]
 series_weight: 10
-math: false
+math: true
 mermaid: false
 # 书籍元数据（每章填同一份，方便以后汇总）
 book:
-  title: ""
-  authors: ""
-  publisher: ""
-  edition: ""
-  year: ""
+  title: "Introduction to Probability"
+  authors: "Joseph K.Blitzstein"
+  publisher: "CRC press"
+  edition: "2"
+  year: "2019"
   link: ""
 # 本篇覆盖的章节，可以只覆盖一章的一部分
-chapter: ""
-chapter_title: ""
-pages: ""
+chapter: "1"
+chapter_title: "Probability and counting"
+pages: "1-33"
 ---
 
 {{< bookinfo >}}
@@ -33,14 +33,131 @@ pages: ""
 ## 这一章讲什么
 
 <!-- 两三句话。读不完一章就写读到的部分，标题里注明范围。 -->
+一条逻辑链贯穿全章：用集合刻画“可能发生什么”，用“石子世界”直观呈现，再依次给出两种概率定义，其中朴素定义依靠计数，公理化定义依靠公理；计数工具支撑前者，公理体系支撑后者。
 
+全章反复强调的方法论是：先判断“等可能”是否成立，再决定能不能用计数来算概率。
 ## 关键概念
 
 <!-- 新出现的概念、定义、符号，后面章节还要用到的。 -->
+- **样本空间S：** 实验所有可能结果的集合
+- **事件A：** S的子集，若实际结果$S_{actual}\in A$,则称A 发生
 
+- **Pebble world:**
+  - 有限样本空间可以视为 **pebble world（石子世界）**,每一个pebble可以认为是一个结果，event 是多个pebble的集合。
+![2026-10-24T162737](2026-10-24T162737.png)
+- 集合理论在概率论中非常有用。
+- 集合语言与自然语言的互译词典
+  - 并=“或（可同时）”
+  - 交=“且”，
+  - 补=“非”。
+- De Morgan's law
+$$
+(A\cup B)^c=A^c\cap B^c\\(A\cap B)^c=A^c\cup B^c\\互斥=A\cap B = \varnothing\\划分=不交且并为S
+$$
+### 朴素定义
+$$
+P _ {\mathrm{naive}} (A) = \frac {| A |}{| S |} = \frac {\text {number of outcomes favorable to} A}{\text {total number of outcomes in} S}.
+$$
+- 立刻得到 $P(A^c)=1-P(A)$；解题时应先判断“正面算难还是反面算难”。
+- 两个强假设：**S 有限**且**各结果等可能**。
+- 典型谬误：“要么发生要么不发生，所以各 1/2”。书中反驳：这会推出“火星有生命”与“火星有智慧生命”概率相同，而这显然不该成立。
+- 三种正当用法：①**对称性**（硬币、洗匀的牌）；②**设计上等可能**（简单随机抽样）；③**作为零模型（null model）**，与观测数据比较以检验“等可能”假设。
+### §1.4 如何计数
+
+#### §1.4.1 乘法法则
+
+若实验 A 有 a 种结果、对每种结果实验 B 有 b 种结果，则复合实验有 $ab$ 种（树状图）。要点：**先后顺序无关**；**每个分支数量必须一致**，否则法则失效（如各行白格数不同的网格）。
+
+由此推出：
+
+- 有放回抽样 $n^k$；
+- 无放回抽样 $n(n-1)\cdots(n-k+1)=\dfrac{n!}{(n-k)!}$；
+- 全排列 $n!$；
+- n 元集合的子集数 $2^n$（每个元素“取/不取”）。
+
+**生日问题**：k 人无重复生日的概率为 $\dfrac{365\cdot364\cdots(365-k+1)}{365^k}$，“至少一对相同”取其补。$k=23$ 时首次超过 0.5，$k=57$ 时超过 99%；直觉来自 $\binom{23}{2}=253$ 个“配对”。
+
+**Leibniz 的错误**：两骰子和为 11 与 12 并非等可能——骰子必须**贴标签**（A、B），(5,6) 与 (6,5) 是两个结果，故 1/18 vs 1/36。书中把“给对象编号/命名”单列为一条防错原则（☣ 1.4.11）。
+
+#### §1.4.2 除重计数（adjusting for overcounting）
+
+若每个对象被数了恰好 c 次，就除以 c。
+
+- 二项系数：$\dbinom{n}{k}=\dfrac{n(n-1)\cdots(n-k+1)}{k!}=\dfrac{n!}{k!(n-k)!}$，$k>n$ 时规定为 0。
+- 计算技巧：$\binom{100}{2}=\frac{100\cdot99}{2}$，不要先算 $100!$（约 $9.33\times10^{157}$）。
+- 多人分组：$\binom{4}{2}=6$ 选委员会；分成两队则 $6/2=3$（队无标号，再除 2!）。
+- 多重集排列：LALALAAA → $\binom{8}{5}=56$；STATISTICS → $\frac{10!}{3!3!2!}=50400$。
+- **二项式定理**：$(x+y)^n=\sum_k\binom{n}{k}x^ky^{n-k}$，用“每个因子选 x 还是 y”即证。
+- **满堂红（full house）**：$\dfrac{13\binom{4}{3}\cdot12\binom{4}{2}}{\binom{52}{5}}=\dfrac{3744}{2598960}\approx0.00144$。
+- **Newton–Pepys 问题**：A（6 骰至少一个 6）≈0.67 > B（12 骰至少两个 6）≈0.62 > C（18 骰至少三个 6）≈0.60；都用补集 + 二项系数计数。
+- **Bose–Einstein（隔板法）**：n 个可辨盒子放 k 个不可辨粒子 = 从 n 类中有放回、不计顺序地取 k 次 = $\binom{n+k-1}{k}$，等价于非负整数解 $x_1+\cdots+x_n=k$ 的个数。⚠️ **此结果一般不能用于朴素概率**：有放回抽样中 $n^k$ 个有序样本等可能，而 $\binom{n+k-1}{k}$ 个无序样本并不等可能（生日列表就是反例）。
+
+---
+
+### §1.5 故事证明（story proofs）
+
+“用两种方式数同一件事”，既是严格证明又能解释“为什么成立”：
+
+- $\binom{n}{k}=\binom{n}{n-k}$（选入 = 选出局）；
+- $n\binom{n-1}{k-1}=k\binom{n}{k}$（先选队长 vs 先选队员）；
+- **Vandermonde**：$\binom{m+n}{k}=\sum_j\binom{m}{j}\binom{n}{k-j}$（m 个低年级 + n 个高年级中选 k 人）；
+- 配对：$\dfrac{(2n)!}{2^n n!}=(2n-1)(2n-3)\cdots3\cdot1$（把人排成一列两两配对，除以“对序 n!”与“对内序 $2^n$”）。
+
+---
+
+### §1.6 非朴素（公理化）定义
+
+**定义 1.6.1**：概率函数 $P$ 把事件映到 $[0,1]$，满足两条公理：
+
+1. $P(\varnothing)=0,\;P(S)=1$；
+2. **可列可加性**：若 $A_1,A_2,\dots$ 互不相交，则 $P\!\left(\bigcup_{j}A_j\right)=\sum_j P(A_j)$。
+
+直观：概率像**质量**——空堆为 0、总质量为 1、不重叠的堆可以相加；此时石子可以不等重，甚至可以有无穷多颗；不可数样本空间则想象成铺开的“泥”。
+
+**两种解释**：频率派（长期重复的频率）与贝叶斯派（信念度，可赋给“某候选人会赢”这类不可重复事件）；二者互补，且由公理推出的结论对任何解释都成立。
+
+**由公理导出的性质**：$P(A^c)=1-P(A)$；$A\subseteq B\Rightarrow P(A)\le P(B)$；$P(A\cup B)=P(A)+P(B)-P(A\cap B)$。
+
+**容斥原理（inclusion–exclusion）**：
+
+$$P\!\left(\bigcup_{i=1}^n A_i\right)=\sum_i P(A_i)-\sum_{i<j}P(A_i\cap A_j)+\sum_{i<j<k}P(A_i\cap A_j\cap A_k)-\cdots+(-1)^{n+1}P(A_1\cap\cdots\cap A_n)$$
+
+（加、减交替的直观：每个区域要被恰好数一次。）
+
+**de Montmort 配对问题**：n 张牌洗匀，逐张翻开并同时报 1…n，求至少一次“报数=牌号”的概率。令 $A_i$ 为第 i 张恰为 i，用容斥并以对称性合并同类项：
+
+$$P=\sum_{k=1}^{n}\frac{(-1)^{k+1}}{k!}\;\xrightarrow{n\to\infty}\;1-\frac1e\approx0.632$$
+
+有趣之处：n 增大时“可能匹配的位置”变多、单个位置匹配概率变小，两者恰好抵消，极限不是 0 也不是 1。书中提醒：容斥在**有对称性**时最好用，否则应优先考虑别的工具。
+
+---
+
+### §1.7 小结与概念地图
+
+图 1.7 是全章骨架：**“可能发生什么？” → 事件（集合） → P → 数字**，并标注 $P(A^c)=1-P(A)$、$P(A\cup B)=P(A)+P(B)-P(A\cap B)$、$P(S)=1$。核心提醒：**事件是集合，概率是数**，不要混为一谈。
+
+---
+### 公式速查
+
+| 情形 | 结果 |
+|---|---|
+| 朴素概率 | $\lvert A\rvert/\lvert S\rvert$ |
+| 有放回、计顺序 | $n^k$ |
+| 无放回、计顺序 | $n!/(n-k)!$ |
+| 无放回、不计顺序 | $\binom{n}{k}=n!/[k!(n-k)!]$ |
+| 多重集排列 | $n!/(n_1!\cdots n_r!)$ |
+| 有放回、不计顺序 | $\binom{n+k-1}{k}$ |
+| 两事件并 | $P(A)+P(B)-P(A\cap B)$ |
+| n 事件并 | 容斥交错和 |
+| 错排/配对 | $\sum_{k\ge1}(-1)^{k+1}/k!\to1-1/e$ |
+
+---
 ## 原文摘录
 
 <!-- 值得回看的句子，标上页码。 -->
+### Note 1
+ page No.6
+![2026-10-24T232620](2026-10-24T232620.png)
 
 ## 我的理解
 
