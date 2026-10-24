@@ -12,7 +12,7 @@ param(
     [string]$Series,
     [string]$Topics = "",
     [string]$Title = "",
-    [ValidateSet("theory", "topic-post", "note")]
+    [ValidateSet("theory", "topic-post", "paper", "book")]
     [string]$Kind = "theory",
     [int]$Weight = 0,
     [switch]$List

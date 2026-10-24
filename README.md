@@ -45,7 +45,7 @@ $env:HUGO_CACHEDIR = "$PWD\.cache\hugo"
 ```powershell
 .\hugo new content logs/calibre-drc-2026.md --kind log
 .\hugo new content cheatsheets/spectre-noise.md --kind cheatsheet
-.\hugo new content notes/paper-xxx.md --kind note
+.\hugo new content notes/paper-xxx.md --kind paper
 .\hugo new content essays/adc-review.md --kind essay
 ```
 
@@ -110,6 +110,18 @@ series_weight: 2      # 系列内顺序，越小越靠前
 
 骨架：这一篇讲什么 → 定义与直觉 → 推导 → 结论与适用范围 → 常见误区 → 参考。
 
+#### 三种排序字段
+
+| 字段 | 写在哪 | 控制什么 |
+|---|---|---|
+| `weight` | `content/topics/<term>/_index.md` | `/topics/` 里专题的先后 |
+| `weight` | `content/series/<term>/_index.md` | 专题页里各系列分组的先后 |
+| `series_weight` | 笔记 front matter | 系列内文章的先后 |
+
+作用域不同，互不冲突：两个 `weight` 是 Hugo 的页面权重，一个属于专题页、一个属于系列页；`series_weight` 是自定义字段，只被系列页和文章底部的系列导航读取。
+
+`/series/` 总览目前按 term 字母排序，不受系列页 `weight` 影响。
+
 ### 新建系列文章（自动编号）
 
 其实不需要提前知道第几篇：文章底部的「第 N/M 篇」是构建时按顺序算出来的。`series_weight` 只负责固定顺序。
@@ -146,7 +158,7 @@ series_weight: 2      # 系列内顺序，越小越靠前
 | `-Series` | 必填，系列 term |
 | `-Topics` | 逗号分隔，如 `noise,signals` |
 | `-Title` | 中文标题；省略时用文件名 |
-| `-Kind` | `theory`（默认）/ `topic-post` / `note` |
+| `-Kind` | `theory`（默认）/ `topic-post` / `paper` / `book` |
 | `-Weight` | 手动指定编号，覆盖自动取号（往中间插篇时用） |
 
 生成的仍是草稿（`draft: true`），填完内容把 `draft` 改成 `false`。
@@ -157,13 +169,50 @@ series_weight: 2      # 系列内顺序，越小越靠前
 |---|---|
 | `--kind theory` | 基础理论，默认开公式，配合 `series` 写成多篇 |
 | `--kind topic-post` | 一般知识文章：结论、背景、内容、适用范围 |
-| `--kind note` | 论文 / 书籍笔记（带 authors、venue 字段） |
+| `--kind paper` | 论文笔记：`paper` 字段（authors、venue、doi） |
+| `--kind book` | 读书笔记：`book` 字段 + 章节 + 页码，配合 `series` 分章 |
 
 ```powershell
 .\hugo new content notes/noise-spectrum.md --kind theory
 .\hugo new content notes/background-knowledge.md --kind topic-post
-.\hugo new content notes/paper-xxx.md --kind note
+.\hugo new content notes/paper-xxx.md --kind paper
+.\hugo new content notes/book-xxx-ch03.md --kind book
 ```
+
+旧的四合一 `--kind note` 已拆成 `paper` 和 `book`。
+
+### 读书笔记
+
+一本书通常要记很多次，一章甚至半章一篇。用 `book` 模板，并把同一本书挂到同一个 `series`：
+
+```powershell
+.\hugo new content notes/design-ch03.md --kind book
+```
+
+```yaml
+title: "信息建筑"
+description: "原研哉关于信息与设计的讨论。"
+book:
+  title: "设计中的设计"
+  authors: "原研哉"
+  publisher: "山东人民出版社"
+  edition: "第 1 版"
+  year: 2006
+chapter: "第 3 章"
+chapter_title: "信息建筑"
+pages: "56–78"
+topics: ["design"]
+series: ["book-design"]
+series_weight: 3
+```
+
+- 正文开头的 `{{< bookinfo >}}` 会把上面这些字段渲染成书籍信息块，正文不用再抄一遍书名。
+- `description` 只写一句摘要；书名、章节、页码交给 front matter 和信息块，避免标题下重复显示。
+- `chapter` 和 `pages` 允许只覆盖一章的一部分，比如 `chapter: "第 3 章前半"`、`pages: "56–66"`。
+- 同一本书的每一篇用相同的 `series`，`series_weight` 用笔记顺序；`/series/book-design/` 就是这本书的目录。
+- 书名、作者只在 front matter 里写，改一次不影响其他章节。
+
+论文笔记则用 `paper` 模板，字段是 `paper.title`、`paper.authors`、`paper.venue`、`paper.doi`，正文骨架是「论文信息 → 它解决什么问题 → 核心方法 → 结果与局限 → 我的疑问」。
 
 生成的文件自带骨架和 front matter。两个开关按需打开：
 
@@ -246,6 +295,66 @@ manim -t --format=webm -qh scene.py YourScene
 <img src="/images/icon.svg" data-nozoom alt="">
 ```
 
+#### 图片放哪
+
+按文章 slug 分目录，统一放 `static/attachments/`：
+
+```text
+static/attachments/noise-figure/
+  shot-20261024-140000.png
+```
+
+引用时用绝对路径：
+
+```markdown
+![噪声系数随温度变化](/attachments/noise-figure/shot-20261024-140000.png)
+```
+
+构建时 `static/` 原样复制到 `public/`，图片地址就是 `/attachments/<slug>/<文件名>`。目录名要和 front matter 里的 `slug` 一致，删文章时整目录一起删。
+
+#### 截图直接插入
+
+`Win+Shift+S` 截图后，在项目根目录运行：
+
+```powershell
+.\scripts\paste-image.cmd -Slug noise-figure
+```
+
+脚本会：
+
+1. 从剪贴板取图，存成 `static/attachments/noise-figure/shot-<时间戳>.png`；
+2. 把 `![截图](/attachments/noise-figure/shot-....png)` 复制到剪贴板；
+3. 回编辑器 `Ctrl+V` 即可。
+
+| 参数 | 说明 |
+|---|---|
+| `-Slug` | 必填，文章 slug |
+| `-File` | 不用剪贴板，直接导入已有图片 |
+| `-Name` | 指定文件名，默认用原文件名或时间戳 |
+| `-Alt` | 替换文字，默认「截图」 |
+
+```powershell
+# 导入已有图片
+.\scripts\paste-image.cmd -Slug noise-figure -File D:\pics\curve.png -Alt "噪声系数曲线"
+```
+
+#### VS Code 里直接粘贴
+
+装 [Paste Image](https://marketplace.visualstudio.com/items?itemName=mushan.vscode-paste-image) 插件，在 `.vscode/settings.json` 里加：
+
+```json
+{
+  "pasteImage.path": "${projectRoot}/static/attachments/${currentFileNameWithoutExt}",
+  "pasteImage.basePath": "${projectRoot}/static",
+  "pasteImage.prefix": "/",
+  "pasteImage.insertPattern": "![${imageFileNameWithoutExt}](${imageFilePath})"
+}
+```
+
+截图后 `Ctrl+Alt+V`，图片落到同名目录，正文直接得到 `/attachments/...` 链接。文件名和 slug 不一致时用脚本更稳。
+
+截图是 PNG，原图可能几百 KB 到几 MB；仓库里攒多了会拖慢构建，必要时先压成 WebP 再放进 `attachments/`。
+
 ### 在代码块里展示短代码
 
 Hugo 会在 Markdown 之前解析短代码，代码块保护不了它。要展示字面量，用转义写法：
@@ -276,8 +385,9 @@ layouts/
   _markup/             ```mermaid 代码块钩子
   _partials/           KaTeX / Mermaid / 页脚扩展
   _shortcodes/         video / mermaid / env
-scripts/               创建系列文章、自动分配编号
+scripts/               创建系列文章、导入截图
 static/videos/         Manim 产物
+static/attachments/    文章截图，按 slug 分目录
 themes/PaperMod/       主题（随仓库提交）
 hugo.yaml
 ```

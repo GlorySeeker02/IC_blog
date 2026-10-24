@@ -5,19 +5,21 @@ draft: true
 slug: "{{ .File.ContentBaseName }}"
 summary: ""
 tags: []
-# 所属专题，可多个：["noise", "signals"]。专题名就是 content/topics/ 下的目录名
+# 所属专题，可多个：["noise", "signals"]
 topics: []
-# 所属系列（可选）：["noise-fundamentals"]
+# 同一主题的论文可以串成系列（可选）：["noise-papers"]
 series: []
 series_weight: 10
 math: false
 mermaid: false
-# 论文/书籍信息（可选）
-source:
+# 论文元数据
+paper:
+  title: ""
   authors: ""
   venue: ""
   year: ""
   link: ""
+  doi: ""
 ---
 
 ## 论文信息
@@ -25,7 +27,7 @@ source:
 - 标题：
 - 作者 / 机构：
 - 发表于：
-- 链接：
+- 链接 / DOI：
 
 ## 它解决什么问题
 
@@ -33,9 +35,11 @@ source:
 
 ## 核心方法
 
-1.
-2.
-3.
+<!-- 关键假设、推导思路、实现代价。 -->
+
+## 结果与局限
+
+<!-- 实验条件是什么，结论在什么范围内成立。 -->
 
 ## 我的疑问 / 和我的工作有什么关系
 

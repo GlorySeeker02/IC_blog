@@ -1,0 +1,2 @@
+# 这个目录存放文章截图，按文章 slug 分文件夹：attachments/<slug>/xxx.png
+# 目录结构由 scripts/paste-image.cmd 自动创建。

@@ -1,0 +1,21 @@
+/* ---------- 书籍笔记：章节信息块 ---------- */
+.book-info {
+  margin: 0 0 1.6rem;
+  padding: 0.7rem 1rem;
+  border-left: 3px solid var(--primary, #333);
+  background: var(--entry, rgba(0, 0, 0, 0.03));
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.book-info p {
+  margin: 0.1rem 0;
+}
+
+.book-title {
+  font-weight: 600;
+}
+
+.book-chapter {
+  opacity: 0.7;
+}

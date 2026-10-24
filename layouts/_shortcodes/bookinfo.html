@@ -1,0 +1,21 @@
+{{- /* 书籍笔记顶部的书籍/章节信息，数据来自 front matter 的 book、chapter、pages。*/ -}}
+{{- $book := .Page.Params.book | default dict -}}
+{{- $chapter := .Page.Params.chapter | default "" -}}
+{{- $chapterTitle := .Page.Params.chapter_title | default "" -}}
+{{- $pages := .Page.Params.pages | default "" -}}
+
+{{- if or $book.title $chapter }}
+<aside class="book-info">
+  {{- with $book.title }}
+  <p class="book-title">《{{ . }}》{{ with $book.authors }} · {{ . }}{{ end }}{{ with $book.publisher }} · {{ . }}{{ with $book.year }} {{ . }}{{ end }}{{ end }}</p>
+  {{- end }}
+  {{- if or $chapter $chapterTitle $pages }}
+  <p class="book-chapter">
+    {{- with $chapter }}{{ . }}{{ end }}
+    {{- if and $chapter $chapterTitle }} · {{ end }}
+    {{- with $chapterTitle }}{{ . }}{{ end }}
+    {{- with $pages }} · pp. {{ . }}{{ end }}
+  </p>
+  {{- end }}
+</aside>
+{{- end }}
