@@ -1,0 +1,42 @@
+{{- /* 系列导航：第 N/M 篇 + 上一篇/下一篇 + 完整目录。*/ -}}
+{{- with .Params.series -}}
+  {{- $name := index . 0 -}}
+  {{- with site.GetPage (printf "/series/%s" $name) -}}
+    {{- $term := . -}}
+    {{- $pages := sort $term.Pages "Params.series_weight" -}}
+    {{- $pos := 0 -}}
+    {{- range $i, $p := $pages -}}
+      {{- if eq $p.RelPermalink $.RelPermalink -}}{{- $pos = add $i 1 -}}{{- end -}}
+    {{- end -}}
+    <nav class="series-nav" aria-label="系列导航">
+      <p class="series-label">
+        系列 <a href="{{ $term.RelPermalink }}">{{ $term.LinkTitle }}</a>
+        {{- if gt $pos 0 }} · 第 {{ $pos }}/{{ len $pages }} 篇{{ end }}
+      </p>
+      {{- if gt $pos 0 }}
+      <div class="series-pager">
+        {{- if gt $pos 1 }}
+        {{- with index $pages (sub $pos 2) }}
+        <a class="prev" href="{{ .RelPermalink }}">← {{ .Title }}</a>
+        {{- end }}
+        {{- end }}
+        {{- if lt $pos (len $pages) }}
+        {{- with index $pages $pos }}
+        <a class="next" href="{{ .RelPermalink }}">{{ .Title }} →</a>
+        {{- end }}
+        {{- end }}
+      </div>
+      <details class="series-toc">
+        <summary>系列目录（{{ len $pages }} 篇）</summary>
+        <ol>
+          {{- range $i, $p := $pages }}
+          <li{{ if eq $p.RelPermalink $.RelPermalink }} class="current"{{ end }}>
+            <a href="{{ $p.RelPermalink }}">{{ add $i 1 }}. {{ $p.Title }}</a>
+          </li>
+          {{- end }}
+        </ol>
+      </details>
+      {{- end }}
+    </nav>
+  {{- end -}}
+{{- end -}}

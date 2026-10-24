@@ -1,0 +1,56 @@
+{{- define "main" }}
+
+{{- if eq .Data.Plural "topics" }}
+  {{- /* 专题列表：直接枚举 term 页面，这样还没挂笔记的空专题也能显示。*/ -}}
+  {{- $items := slice -}}
+  {{- range site.Pages -}}
+    {{- if and (eq .Kind "term") (hasPrefix .RelPermalink (printf "/%s/" $.Data.Plural)) -}}
+      {{- $items = $items | append (dict "p" . "w" (.Params.weight | default 999)) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if .Title }}
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}
+    <div class="post-description">{{ . }}</div>
+    {{- end }}
+  </header>
+  {{- end }}
+
+  {{- with .Content }}
+  <div class="post-content md-content">{{ . }}</div>
+  {{- end }}
+
+  <ul class="terms-tags">
+    {{- range sort $items "w" }}
+    <li>
+      <a href="{{ .p.RelPermalink }}">{{ .p.LinkTitle }}{{ if .p.Pages }} <sup><strong><sup>{{ len .p.Pages }}</sup></strong></sup>{{ end }}</a>
+    </li>
+    {{- end }}
+  </ul>
+{{- else }}
+  {{- if .Title }}
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}
+    <div class="post-description">{{ .Description }}</div>
+    {{- end }}
+  </header>
+  {{- end }}
+
+  <ul class="terms-tags">
+    {{- $type := .Type }}
+    {{- range $key, $value := .Data.Terms.Alphabetical }}
+      {{- $name := .Name }}
+      {{- $count := .Count }}
+      {{- with site.GetPage (printf "/%s/%s" $type $name) }}
+      <li>
+        <a href="{{ .Permalink }}">{{ .LinkTitle }} <sup><strong><sup>{{ $count }}</sup></strong></sup> </a>
+      </li>
+      {{- end }}
+    {{- end }}
+  </ul>
+{{- end }}
+
+{{- end }}{{/* end main */}}

@@ -1,0 +1,77 @@
+{{- define "main" }}
+
+{{- $pages := .Pages -}}
+{{- $pageSet := dict -}}
+{{- range $pages -}}{{- $pageSet = merge $pageSet (dict .RelPermalink true) -}}{{- end -}}
+
+{{- if .Title }}
+<header class="page-header">
+  {{- partial "breadcrumbs.html" . }}
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <div class="post-description">{{ . }}</div>
+  {{- end }}
+</header>
+{{- end }}
+
+{{- with .Content }}
+<div class="post-content md-content">{{ . }}</div>
+{{- end }}
+
+{{- /* 这个专题下出现过的系列，按系列页的 weight 排序 */ -}}
+{{- $seriesNames := slice -}}
+{{- $seen := dict -}}
+{{- range $pages -}}
+  {{- with .Params.series -}}
+    {{- $n := index . 0 -}}
+    {{- if and (not (isset $seen $n)) (site.GetPage (printf "/series/%s" $n)) -}}
+      {{- $seen = merge $seen (dict $n true) -}}
+      {{- $seriesNames = $seriesNames | append $n -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $items := slice -}}
+{{- range $seriesNames -}}
+  {{- $term := site.GetPage (printf "/series/%s" .) -}}
+  {{- $items = $items | append (dict "term" $term "w" ($term.Params.weight | default 999)) -}}
+{{- end -}}
+
+{{- range sort $items "w" }}
+<section class="topic-series">
+  <h2><a href="{{ .term.RelPermalink }}">{{ .term.LinkTitle }}</a></h2>
+  <ol class="topic-list">
+    {{- range sort .term.Pages "Params.series_weight" }}
+      {{- if isset $pageSet .RelPermalink }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    {{- end }}
+  </ol>
+</section>
+{{- end }}
+
+{{- /* 没有系列（或系列页缺失）的散篇 */ -}}
+{{- $loose := slice -}}
+{{- range $pages -}}
+  {{- $inSeries := false -}}
+  {{- with .Params.series -}}
+    {{- if site.GetPage (printf "/series/%s" (index . 0)) -}}{{- $inSeries = true -}}{{- end -}}
+  {{- end -}}
+  {{- if not $inSeries -}}{{- $loose = $loose | append . -}}{{- end -}}
+{{- end -}}
+
+{{- with $loose }}
+<section class="topic-loose">
+  {{- if $items }}<h2>单篇</h2>{{ end }}
+  <ul class="topic-list">
+    {{- range . }}
+    <li>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{- with .Summary }}<span class="topic-summary">{{ . | plainify | truncate 60 }}</span>{{ end }}
+    </li>
+    {{- end }}
+  </ul>
+</section>
+{{- end }}
+
+{{- end }}{{/* end main */}}

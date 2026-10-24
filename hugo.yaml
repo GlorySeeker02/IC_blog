@@ -25,11 +25,17 @@ outputs:
 taxonomies:
   tag: "tags"
   category: "categories"
+  # 专题：多对多，一篇笔记可以同时属于多个专题（front matter 写 topics: [...]）
+  topic: "topics"
+  # 系列：专题里的一条连载线，比如「噪声基础」分 5 篇写，用 series_weight 排序
+  series: "series"
 
 # 固定链接：与栏目一一对应，保证已分享的链接长期有效
 permalinks:
   logs: "/logs/:slug/"
   cheatsheets: "/cheatsheets/:slug/"
+  # 笔记平铺在 content/notes/ 下，归属哪个专题由 front matter 的 topics 决定，
+  # 所以 URL 只保留 slug，不再带专题层级。
   notes: "/notes/:slug/"
   essays: "/essays/:slug/"
 
@@ -158,6 +164,10 @@ menu:
       name: "笔记"
       url: "/notes/"
       weight: 30
+    - identifier: "topics"
+      name: "专题"
+      url: "/topics/"
+      weight: 35
     - identifier: "essays"
       name: "长文"
       url: "/essays/"

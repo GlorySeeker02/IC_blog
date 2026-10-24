@@ -1,0 +1,12 @@
+{{- /* 文章正文之后：系列导航 + 所属专题 + 自动反向链接。*/ -}}
+{{- partial "series-nav.html" . -}}
+{{- with .GetTerms "topics" }}
+<p class="post-topics">
+  <span>专题</span>
+  {{- range $i, $t := . }}
+  {{- if $i }}<span class="sep">·</span>{{ end }}
+  <a href="{{ $t.RelPermalink }}">{{ $t.LinkTitle }}</a>
+  {{- end }}
+</p>
+{{- end }}
+{{- partial "backlinks.html" . -}}

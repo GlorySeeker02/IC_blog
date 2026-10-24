@@ -1,0 +1,30 @@
+{{- define "main" }}
+
+{{- if .Title }}
+<header class="page-header">
+  {{- partial "breadcrumbs.html" . }}
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}
+  <div class="post-description">{{ . }}</div>
+  {{- end }}
+</header>
+{{- end }}
+
+{{- with .Content }}
+<div class="post-content md-content">{{ . }}</div>
+{{- end }}
+
+{{- if .Pages }}
+<ol class="series-parts">
+  {{- range $i, $p := sort .Pages "Params.series_weight" }}
+  <li>
+    <a href="{{ $p.RelPermalink }}">{{ add $i 1 }}. {{ $p.Title }}</a>
+    {{- with $p.Summary }}
+    <p class="series-summary">{{ . | plainify | truncate 80 }}</p>
+    {{- end }}
+  </li>
+  {{- end }}
+</ol>
+{{- end }}
+
+{{- end }}{{/* end main */}}
